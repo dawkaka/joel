@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.c-container {
+  @apply px-2;
+  width: min(100vw, 1000px);
+}
