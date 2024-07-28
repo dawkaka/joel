@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Drug, getDrugs, addDrug, updateDrug, deleteDrug } from "../db";
 import Layout from "./Layout";
+import toast from "react-hot-toast";
+import { useAppContext } from "../context";
+import { Config } from "./Config";
 
 const Admin: React.FC = () => {
   const [drugs, setDrugs] = useState<Drug[]>([]);
@@ -12,6 +15,9 @@ const Admin: React.FC = () => {
   const [uname, setuName] = useState("");
   const [uquantity, setuQuantity] = useState(0);
   const [uunitPrice, setuUnitPrice] = useState(0);
+  const { setIsAdmin } = useAppContext();
+
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     loadDrugs();
@@ -24,7 +30,7 @@ const Admin: React.FC = () => {
 
   const handleAddDrug = () => {
     if (name === "") {
-      alert("Drug name cannot be empty");
+      toast.error("Item name cannot be empty");
       return;
     }
     const newDrug = {
@@ -38,6 +44,7 @@ const Admin: React.FC = () => {
     setQuantity(0);
     setUnitPrice(0);
     loadDrugs();
+    toast.success("Item Added successfully");
   };
 
   const handleUpdateDrug = () => {
@@ -54,6 +61,7 @@ const Admin: React.FC = () => {
       setuUnitPrice(0);
       setUpdateId(undefined);
       loadDrugs();
+      toast.success("Item Updated successfully");
     }
   };
 
@@ -63,13 +71,59 @@ const Admin: React.FC = () => {
     }
     deleteDrug(id);
     loadDrugs();
+    toast.success("Item Deleted successfully");
   };
 
   return (
     <Layout>
-      <div className="w-full py-14 relative">
-        <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="w-full py-20 relative">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <div className="flex items-center gap-6">
+            {showSettings && (
+              <div
+                className="bg-black rounded-lg shadow p-4 fixed inset-0  z-50 flex flex-col items-center justify-center  bg-opacity-35"
+                onClick={() => setShowSettings(false)}
+              >
+                <div
+                  className="flex flex-col bg-white w-[500px] rounded-lg border p-6"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Config />
+                </div>
+              </div>
+            )}
+            <button onClick={() => setShowSettings(true)}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-6 h-6 text-gray-800"
+              >
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+
+            <button
+              className="border px-4 py-1 rounded-lg"
+              onClick={() => {
+                localStorage.setItem("isLoggedIn", "false");
+                setIsAdmin(false);
+                window.location.href = "/";
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg border p-6 mb-6">
           <form className="grid grid-cols-3 gap-4" onSubmit={handleAddDrug}>
             <div className="col-span-1">
               <label
@@ -121,7 +175,7 @@ const Admin: React.FC = () => {
                 onClick={handleAddDrug}
                 className="inline-flex items-center justify-center bg-slate-800 hover:cursor-pointer text-white w-max text-center px-4 py-2 text-sm rounded-lg"
               >
-                Add Drug
+                Add
               </button>
             </div>
           </form>
@@ -191,22 +245,22 @@ const Admin: React.FC = () => {
             </form>
           </div>
         )}
-        <div className="bg-white rounded-lg border shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Drugs</h2>
+        <div className="bg-white rounded-lg border p-6">
+          <h2 className="text-xl font-bold mb-4">Items</h2>
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">
-              <thead className="[&amp;_tr]:border-b">
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <th className="h-12 px-4 text-left align-middle font-medium ">
+              <thead className="[&amp;_tr]:border-b bg-gray-100">
+                <tr className="border-b transition-colors">
+                  <th className="h-10 px-4 text-left align-middle font-medium ">
                     Name
                   </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium ">
+                  <th className="h-10 px-4 text-left align-middle font-medium ">
                     Price
                   </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium ">
+                  <th className="h-10 px-4 text-left align-middle font-medium ">
                     Quantity
                   </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium ">
+                  <th className="h-10 px-4 text-left align-middle font-medium ">
                     Actions
                   </th>
                 </tr>
@@ -214,11 +268,15 @@ const Admin: React.FC = () => {
               <tbody className="">
                 {drugs.map((drug) => {
                   return (
-                    <tr className="border-b transition-colors">
-                      <td className="p-4 align-middle">{drug.name}</td>
-                      <td className="p-4 align-middle">GHS {drug.unitPrice}</td>
-                      <td className="p-4 align-middle">{drug.quantity}</td>
-                      <td className="p-4 flex gap-4 align-middle">
+                    <tr className="border-b h-10 transition-colors">
+                      <td className="px-4 py-2 align-middle">{drug.name}</td>
+                      <td className="px-4 py-2 align-middle">
+                        GHS {drug.unitPrice}
+                      </td>
+                      <td className="px-4 py-2 align-middle">
+                        {drug.quantity}
+                      </td>
+                      <td className="px-4 py-2 flex gap-4 align-middle">
                         <button
                           title="Edit"
                           className=" bg-slate-800 p-2 text-white rounded-md"
