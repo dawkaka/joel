@@ -8,22 +8,32 @@ const pwaOptions: Partial<VitePWAOptions> = {
   includeAssets: ["favicon.svg"],
   registerType: "autoUpdate",
   manifest: {
-    name: "PWA Router",
-    short_name: "PWA Router",
-    theme_color: "#ffffff",
+    name: "Pharmacy Management",
+    short_name: "Pharmacy",
+    theme_color: "#ff0000",
     icons: [
       {
-        src: "pwa-192x192.png", // <== don't add slash, for testing
+        src: "pwa-64x64.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/pwa-512x512.png", // <== don't remove slash, for testing
+        src: "pwa-144x144.png",
+        sizes: "144x144",
+        type: "image/png",
+      },
+      {
+        src: "pwa-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "pwa-512x512.png",
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: "pwa-512x512.png", // <== don't add slash, for testing
+        src: "pwa-512x512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any maskable",
