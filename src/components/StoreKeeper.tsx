@@ -45,6 +45,7 @@ const StoreKeeper: React.FC = () => {
       });
       setSale({ drug: "", unitPrice: 0, quantity: 0 });
       loadDrugs();
+      toast.success("Sale recorded successfully");
     } else {
       toast.error("Not enough quantity in stock");
     }
